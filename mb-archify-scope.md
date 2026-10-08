@@ -1,7 +1,7 @@
 ---
 title: "mb-archify-scope"
 doc-id: "mb-ab9e047b"
-updated: "2026-10-04"
+updated: "2026-10-08"
 ---
 # mb-archify-scope — Front-of-pipe scoping for /archify
 
@@ -173,8 +173,9 @@ node inventory, main path, and corridor plan. Silence is never consent.
 
 ### Phase 8 — Handoff contract
 
-Write the approved Scope Card to `output/{subject}-scope.md` and the compact
-machine header to `output/{subject}-header.json` without re-deriving anything —
+Write the approved Scope Card to `output/{slug}/{subject}-scope.md` and the
+compact machine header to `output/{slug}/{subject}-header.json` without
+re-deriving anything —
 the chat-approved text is copied verbatim. This is the **first write of the
 whole run**. The Archify authoring run then consumes the header as its input
 contract; a failed probe returns work to Phase 5 for reshaping, never proceeds
@@ -186,7 +187,7 @@ byte-for-byte; the header is schema-valid; the Archify run is handed the header.
 ### Phase 9 — Close-out (learnings, on developer approval)
 
 After the authoring run finishes, **ask** — never assume — whether to record
-learnings for this run in `output/learnings/{YYYY-MM-DD}-{subject}.md`. This is
+learnings for this run in `output/{slug}/learnings/{YYYY-MM-DD}-{subject}.md`. This is
 the ecosystem's close-out pattern:
 a run produces judgment calls worth keeping, and nothing in the stack records
 them unattended. On approval, write a run learnings file in the suite's
@@ -233,15 +234,16 @@ conditions) · decisions (what the developer approved, verbatim)
 
 ### File conventions
 
-All outputs go to the dedicated Archify output folder:
+All outputs go to the dedicated Archify output folder, nested one folder per
+project slug (`output/{slug}/`):
 
 | File | Purpose |
 |---|---|
-| `output/{subject}-scope.md` | the Scope Card, reviewable |
-| `output/{subject}-header.json` | the machine contract for the Archify run |
-| `output/{subject}-draft.json` | the Archify candidate spec (authored by Archify, not this skill) |
-| `output/{subject}-render.html` | the delivered artifact (plus `deliver`'s private snapshot sidecar) |
-| `output/learnings/{YYYY-MM-DD}-{subject}.md` | run learnings, written on developer approval (Phase 9) |
+| `output/{slug}/{subject}-scope.md` | the Scope Card, reviewable |
+| `output/{slug}/{subject}-header.json` | the machine contract for the Archify run |
+| `output/{slug}/{subject}-draft.json` | the Archify candidate spec (authored by Archify, not this skill) |
+| `output/{slug}/{subject}-render.html` | the delivered artifact (plus `deliver`'s private snapshot sidecar) |
+| `output/{slug}/learnings/{YYYY-MM-DD}-{subject}.md` | run learnings, written on developer approval (Phase 9) |
 
 ---
 
