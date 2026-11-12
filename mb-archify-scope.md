@@ -1,7 +1,7 @@
 ---
 title: "mb-archify-scope"
 doc-id: "mb-ab9e047b"
-updated: "2026-10-08"
+updated: "2026-11-12"
 ---
 # mb-archify-scope — Front-of-pipe scoping for /archify
 
@@ -25,7 +25,7 @@ A request to produce any visual diagram, map, pipeline, sequence, or lifecycle
 picture — "map the X flows", "draw the architecture", "diagram this process",
 "visualize this pipeline" — that would otherwise proceed straight into `/archify`.
 Also fires on recovery: when a previous Archify run returned dense-route or
-corridor failures, this skill re-scopes before authoring is retried.
+corridor failures, this skill re-scopes before authoring is retried. The threshold is one failed repair: when Archify's validation fails on routing (an edge through a node, two edges sharing a port, a blocked corridor) and one geometry repair has not cleared it, the authoring run stops and returns here. The recovery reshapes the scope (moves a node to the row its edge naturally enters, or moves an entity to the cards) and presents the revised Scope Card for the developer's approval; it never hand-routes around the failure.
 
 A request that explicitly names a diagram type and a small, bounded source
 ("one sequence diagram of the checkout API") may fast-track: produce a minimal
@@ -137,6 +137,7 @@ the **Corridor Plan**.
   sitting on the main path or on a short side branch that the audience needs to
   see. Nodes that only context might explain become Deferred List entries.
 - **Main Path** — exactly one. Side branches leave the nearest main-path node.
+- **Edges per node** — counted for every node against the type's budget below. In the architecture type a node takes at most one edge per side, four in all; a node that needs more sends the surplus entity to the cards.
 - **Deferred List** — explicitly named and explicitly removed:
   everything that is real but will live in Archify *cards* (prose) or in the
   viewer's guided views, not as nodes or edges. Deferral is the loving decision,
@@ -250,7 +251,7 @@ project slug (`output/{slug}/`):
 ## The layout budgets (reference — authoritative numbers live in the renderer)
 
 The exact per-type budget is defined in the Archify package at
-`renderers/<type>/README.md`; read it at Phase 5, never from memory. The
+`renderers/<type>/README.md` (the architecture type has none; see below); read it at Phase 5, never from memory. The
 dataflow budget is the worked example that justified this skill and the one
 trap most likely to recur:
 
@@ -270,6 +271,19 @@ pass through a **row band that is empty of nodes**, and the corridor plan names
 those bands by row. A plan that routes every flow at its source's own row,
 through a column where that row is occupied, is a wall — reshape the rows, do
 not hand-route around them.
+
+### Architecture type
+
+The architecture renderer has no README with a layout budget. Its budget is read from the renderer source itself (`renderers/architecture/grid.mjs` and `render-architecture.mjs`), and the Scope Card's layout-budget field names those files.
+
+| Fact | Consequence for the scope |
+|---|---|
+| With explicit sides, an edge is pinned to the centre port of its target's side, and its last segment runs perpendicular into that centre | One edge per side: at most four edges per node. Feed a hub from different sides, or place a feeder in the row its edge naturally enters |
+| A side is inferred horizontal whenever the two nodes' centres differ horizontally | A straight vertical edge needs the two nodes centre-aligned exactly; then no side or via point is needed |
+| Via points do not snap: the route runs straight from the port to the first via point and from the last via point into the target port | The first via point sits on the source port's axis and the last on the target port's axis |
+| A label on a horizontal edge can sit against an unrelated vertical edge | Plan vertical edges outside the main path's band; where one must cross it, place the label in an empty band |
+
+A diagram whose nodes carry a classification (such as Mybizz's common and trade marks) carries it in each node's sublabel, so the mark appears in the drawing as well as on the card.
 
 ---
 
